@@ -1,0 +1,11 @@
+---
+#- name: restart mysql
+#  ansible.builtin.service:
+#    name: "{{ mysql_daemon }}"
+#    state: restarted
+#    sleep: 5
+#    listen: restart mysql
+- name: restart mysql
+  ansible.builtin.debug:  
+    msg: I'm a handler from role
+  listen:  restart mysql

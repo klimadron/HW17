@@ -1,0 +1,47 @@
+- hosts: web
+  tasks:
+    - name: Update and install nginx
+      become: true
+      ansible.builtin.apt:
+        name:
+        - nginx
+        state: latest
+        update_cache: yes
+    - name: Restart Nginx
+      become: true
+      become_method: sudo
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+    - name: Print a message
+      ansible.builtin.debug:
+        msg: "before we run our role"
+    - name: Static Import the mysql role
+      become: true
+      import_role:
+        name: geerlingguy.mysql
+    - name: Print a message
+      notify: 
+        restart mysql
+      ansible.builtin.debug:
+        msg: "after we ran our role"
+      
+    - name: Print a message
+      ansible.builtin.debug:
+        msg: "this task runs before the example role"
+    - name: Dynamic Include the mysql role    
+      block:
+        - name: Dynamic Include the mysql role
+          include_role:
+            name: geerlingguy.mysql
+      ignore_errors: yes
+    - name: Print a message Test
+      # notify: restart mysql   
+      ansible.builtin.ping:
+      notify: 
+        restart mysql
+  # handlers:
+  #   - name: Here are my custom common handlers
+  #     # You can also look at include_tasks: handlers.yml
+  #     import_tasks: roles/geerlingguy.mysql/handlers/main.yml      
+        
